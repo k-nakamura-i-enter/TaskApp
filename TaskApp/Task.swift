@@ -20,7 +20,7 @@ class Task: Object {
     // 日時
     @Persisted var date = Date()
     
-    //カテゴリ
+    //カテゴリ名
     @Persisted var category = ""
 
 }

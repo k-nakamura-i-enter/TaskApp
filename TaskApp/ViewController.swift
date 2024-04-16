@@ -9,17 +9,28 @@ import UIKit
 import RealmSwift
 import UserNotifications
 
-class ViewController: UIViewController, UITableViewDelegate,UITableViewDataSource {
+
+class ViewController: UIViewController, UITableViewDelegate,UITableViewDataSource, UISearchBarDelegate{
+    @IBOutlet weak var categorySearch: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
     // Realmインスタンスを取得する
     let realm = try! Realm()
-
+    var searchText: String?
+    var searchMode = false
     // DB内のタスクが格納されるリスト。
     // 日付の近い順でソート：昇順
     // 以降内容をアップデートするとリスト内は自動的に更新される。
     var taskArray = try! Realm().objects(Task.self).sorted(byKeyPath: "date", ascending: true)
-
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar){
+        if let searchText = searchBar.text {
+            print(searchText)
+            taskArray = taskArray.where({ $0.category == searchText})
+            tableView.reloadData()
+        }
+        taskArray = try! Realm().objects(Task.self)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,12 +56,13 @@ class ViewController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         super.viewWillAppear(animated)
         tableView.reloadData()
     }
-    
+    // データの数（＝セルの数）を返すメソッド
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return taskArray.count
     }
-    
+    // 各セルの内容を返すメソッド
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // 再利用可能な cell を得る
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         // Cellに値を設定する
         let task = taskArray[indexPath.row]
@@ -64,15 +76,15 @@ class ViewController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         
         return cell
     }
-    
+    // 各セルを選択した時に実行されるメソッド
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "cellSegue",sender: nil)
     }
-    
+    // セルが削除が可能なことを伝えるメソッド
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath)-> UITableViewCell.EditingStyle {
         return .delete
     }
-    
+    // Delete ボタンが押された時に呼ばれるメソッド
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // 削除するタスクを取得する
@@ -98,5 +110,7 @@ class ViewController: UIViewController, UITableViewDelegate,UITableViewDataSourc
             }
         }
     }
+    
+    
 }
 

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A2857F27891C41FCC9A95253 /* Pods_TaskApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B954BE061C83E092A7818493 /* Pods_TaskApp.framework */; };
+		CF4BAF972BCE12FD00C93F68 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4BAF962BCE12FD00C93F68 /* CategoryViewController.swift */; };
 		CF66DC412BC8EFB0001CD2C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF66DC402BC8EFB0001CD2C2 /* AppDelegate.swift */; };
 		CF66DC432BC8EFB0001CD2C2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF66DC422BC8EFB0001CD2C2 /* SceneDelegate.swift */; };
 		CF66DC452BC8EFB0001CD2C2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF66DC442BC8EFB0001CD2C2 /* ViewController.swift */; };
@@ -20,6 +21,7 @@
 
 /* Begin PBXFileReference section */
 		B954BE061C83E092A7818493 /* Pods_TaskApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TaskApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF4BAF962BCE12FD00C93F68 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		CF66DC3D2BC8EFB0001CD2C2 /* TaskApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TaskApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF66DC402BC8EFB0001CD2C2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CF66DC422BC8EFB0001CD2C2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 				CF66DC422BC8EFB0001CD2C2 /* SceneDelegate.swift */,
 				CF66DC442BC8EFB0001CD2C2 /* ViewController.swift */,
 				CF66DC542BC91158001CD2C2 /* InputViewController.swift */,
+				CF4BAF962BCE12FD00C93F68 /* CategoryViewController.swift */,
 				CF66DC462BC8EFB0001CD2C2 /* Main.storyboard */,
 				CF66DC492BC8EFB1001CD2C2 /* Assets.xcassets */,
 				CF66DC4B2BC8EFB1001CD2C2 /* LaunchScreen.storyboard */,
@@ -214,6 +217,7 @@
 			files = (
 				CF66DC452BC8EFB0001CD2C2 /* ViewController.swift in Sources */,
 				CF66DC412BC8EFB0001CD2C2 /* AppDelegate.swift in Sources */,
+				CF4BAF972BCE12FD00C93F68 /* CategoryViewController.swift in Sources */,
 				CF86CC822BCCBB0F00AC8286 /* Task.swift in Sources */,
 				CF66DC432BC8EFB0001CD2C2 /* SceneDelegate.swift in Sources */,
 				CF66DC552BC91158001CD2C2 /* InputViewController.swift in Sources */,
