@@ -16,20 +16,22 @@ class ViewController: UIViewController, UITableViewDelegate,UITableViewDataSourc
     
     // Realmインスタンスを取得する
     let realm = try! Realm()
-    var searchText: String?
-    var searchMode = false
     // DB内のタスクが格納されるリスト。
     // 日付の近い順でソート：昇順
     // 以降内容をアップデートするとリスト内は自動的に更新される。
     var taskArray = try! Realm().objects(Task.self).sorted(byKeyPath: "date", ascending: true)
     
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        taskArray = try! Realm().objects(Task.self)
+        tableView.reloadData()
+    }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar){
+        taskArray = try! Realm().objects(Task.self)
         if let searchText = searchBar.text {
-            print(searchText)
-            taskArray = taskArray.where({ $0.category == searchText})
+            taskArray = taskArray.where({$0.category.categoryName == searchText})
             tableView.reloadData()
         }
-        taskArray = try! Realm().objects(Task.self)
     }
     
     override func viewDidLoad() {
@@ -38,6 +40,8 @@ class ViewController: UIViewController, UITableViewDelegate,UITableViewDataSourc
         tableView.fillerRowHeight = UITableView.automaticDimension
         tableView.delegate = self
         tableView.dataSource = self
+        
+        self.navigationItem.backButtonTitle = "キャンセル"
     }
     
     // segue で画面遷移する時に呼ばれる

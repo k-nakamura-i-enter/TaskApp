@@ -10,14 +10,14 @@ import RealmSwift
 import UserNotifications
 
 class InputViewController: UIViewController {
-
     @IBOutlet weak var titleTextField: UITextField!
-    @IBOutlet weak var categoryTextField: UITextField!
     @IBOutlet weak var contentsTextView: UITextView!
     @IBOutlet weak var datePicker: UIDatePicker!
     
     let realm = try! Realm()
     var task: Task!
+    let category = Category()
+    var saveMode = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,11 +25,17 @@ class InputViewController: UIViewController {
         // 背景をタップしたらdismissKeyboardメソッドを呼ぶように設定する
         let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(dismissKeyboard))
         self.view.addGestureRecognizer(tapGesture)
-
+        
+        let tapCategory: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(categorySetting))
+        categoryTextField.addGestureRecognizer(tapCategory)
+        
         titleTextField.text = task.title
         contentsTextView.text = task.contents
         datePicker.date = task.date
-        categoryTextField.text = task.category
+        if let category = task.category {
+            categoryTextField.text = category.categoryName
+        }
+        
     }
     
     @objc func dismissKeyboard(){
@@ -37,17 +43,12 @@ class InputViewController: UIViewController {
         view.endEditing(true)
     }
     
+    @objc func categorySetting() {
+        performSegue(withIdentifier: "categorySegue", sender: nil)
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
-        try! realm.write {
-            self.task.title = self.titleTextField.text!
-            self.task.contents = self.contentsTextView.text
-            self.task.date = self.datePicker.date
-            self.task.category = self.categoryTextField.text!
-            self.realm.add(self.task, update: .modified)
-        }
         
-        setNotification(task: task)
-
         super.viewWillDisappear(animated)
     }
     
@@ -88,6 +89,19 @@ class InputViewController: UIViewController {
                 print("---------------/")
             }
         }
+    }
+    
+    @IBAction func saveButton(_ sender: Any) {
+        try! realm.write {
+            self.task.title = self.titleTextField.text!
+            self.task.contents = self.contentsTextView.text
+            self.task.date = self.datePicker.date
+            self.realm.add(self.task, update: .modified)
+            self.category.categoryName = self.categoryTextField.text!
+            self.task.category = category
+        }
+        setNotification(task: task)
+        navigationController?.popViewController(animated: true)
     }
     /*
     // MARK: - Navigation

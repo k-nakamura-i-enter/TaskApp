@@ -21,6 +21,13 @@ class Task: Object {
     @Persisted var date = Date()
     
     //カテゴリ名
-    @Persisted var category = ""
+    @Persisted var category: Category?
 
+}
+
+class Category: Object {
+    // ID
+    @Persisted var id = ""
+    //カテゴリ名
+    @Persisted var categoryName = ""
 }
