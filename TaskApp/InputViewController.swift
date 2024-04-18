@@ -9,15 +9,17 @@ import UIKit
 import RealmSwift
 import UserNotifications
 
-class InputViewController: UIViewController {
+class InputViewController: UIViewController, CategoryViewControllerDelegate {
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentsTextView: UITextView!
     @IBOutlet weak var datePicker: UIDatePicker!
+    @IBOutlet weak var categoryTextField: UITextField!
     
     let realm = try! Realm()
     var task: Task!
     let category = Category()
-    var saveMode = false
+    var categoryId: String?
+    var categoryName: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,7 +37,8 @@ class InputViewController: UIViewController {
         if let category = task.category {
             categoryTextField.text = category.categoryName
         }
-        
+
+        self.navigationItem.backButtonTitle = "キャンセル"
     }
     
     @objc func dismissKeyboard(){
@@ -45,6 +48,18 @@ class InputViewController: UIViewController {
     
     @objc func categorySetting() {
         performSegue(withIdentifier: "categorySegue", sender: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+        let categoryViewController:CategoryViewController = segue.destination as! CategoryViewController
+        categoryViewController.task = Task()
+        categoryViewController.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if let category = self.categoryName {
+            categoryTextField.text = category
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -91,13 +106,28 @@ class InputViewController: UIViewController {
         }
     }
     
+    func receiveId(_ id: String) {
+        self.categoryId = id
+        if let categoryid = categoryId{
+            print(categoryid)
+        }
+    }
+    
+    func receiveName(_ name: String) {
+        self.categoryName = name
+        if let categoryname = self.categoryName{
+            print(categoryname)
+        }
+    }
+    
     @IBAction func saveButton(_ sender: Any) {
         try! realm.write {
             self.task.title = self.titleTextField.text!
             self.task.contents = self.contentsTextView.text
             self.task.date = self.datePicker.date
             self.realm.add(self.task, update: .modified)
-            self.category.categoryName = self.categoryTextField.text!
+            if let id = categoryId {self.category.id = id}
+            if let name = categoryName {self.category.categoryName = name}
             self.task.category = category
         }
         setNotification(task: task)

@@ -6,13 +6,41 @@
 //
 
 import UIKit
+import RealmSwift
+
+protocol CategoryViewControllerDelegate: AnyObject{
+    func receiveId(_ id: String)
+    func receiveName(_ name: String)
+}
 
 class CategoryViewController: UIViewController {
-
+    @IBOutlet weak var categoryId: UITextField!
+    @IBOutlet weak var categoryName: UITextField!
+    
+    let realm = try! Realm()
+    var task: Task!
+    
+    weak var delegate: CategoryViewControllerDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        if let category = task.category {
+            categoryId.text = category.id
+            categoryName.text = category.categoryName
+        }
+    }
+    
+    @IBAction func saveButton(_ sender: Any) {
+        if let id = categoryId.text {
+            //print(id)
+            delegate?.receiveId(id)
+        }
+        if let name = categoryName.text {
+            //print(name)
+            delegate?.receiveName(name)
+        }
+        navigationController?.popViewController(animated: true)
     }
     
 
