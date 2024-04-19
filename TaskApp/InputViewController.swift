@@ -9,13 +9,15 @@ import UIKit
 import RealmSwift
 import UserNotifications
 
-class InputViewController: UIViewController, CategoryViewControllerDelegate {
+class InputViewController: UIViewController {
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentsTextView: UITextView!
     @IBOutlet weak var datePicker: UIDatePicker!
-    @IBOutlet weak var categoryTextField: UITextField!
+    
     
     let realm = try! Realm()
+    var categoryArray = try! Realm().objects(Category.self)
+    var uniqueCategoryArray: Set<String> = []
     var task: Task!
     let category = Category()
     var categoryId: String?
@@ -24,19 +26,17 @@ class InputViewController: UIViewController, CategoryViewControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
         // 背景をタップしたらdismissKeyboardメソッドを呼ぶように設定する
         let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(dismissKeyboard))
         self.view.addGestureRecognizer(tapGesture)
         
-        let tapCategory: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(categorySetting))
-        categoryTextField.addGestureRecognizer(tapCategory)
-        
         titleTextField.text = task.title
         contentsTextView.text = task.contents
         datePicker.date = task.date
-        if let category = task.category {
-            categoryTextField.text = category.categoryName
-        }
+//        if let category = task.category {
+//            categoryTextField.text = category.categoryName
+//        }
 
         self.navigationItem.backButtonTitle = "キャンセル"
     }
@@ -51,19 +51,16 @@ class InputViewController: UIViewController, CategoryViewControllerDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
-        let categoryViewController:CategoryViewController = segue.destination as! CategoryViewController
-        categoryViewController.task = Task()
-        categoryViewController.delegate = self
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if let category = self.categoryName {
-            categoryTextField.text = category
-        }
+//        if let category = self.categoryName {
+//            categoryTextField.text = category
+//        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        
         super.viewWillDisappear(animated)
     }
     
@@ -106,19 +103,6 @@ class InputViewController: UIViewController, CategoryViewControllerDelegate {
         }
     }
     
-    func receiveId(_ id: String) {
-        self.categoryId = id
-        if let categoryid = categoryId{
-            print(categoryid)
-        }
-    }
-    
-    func receiveName(_ name: String) {
-        self.categoryName = name
-        if let categoryname = self.categoryName{
-            print(categoryname)
-        }
-    }
     
     @IBAction func saveButton(_ sender: Any) {
         try! realm.write {
@@ -126,8 +110,6 @@ class InputViewController: UIViewController, CategoryViewControllerDelegate {
             self.task.contents = self.contentsTextView.text
             self.task.date = self.datePicker.date
             self.realm.add(self.task, update: .modified)
-            if let id = categoryId {self.category.id = id}
-            if let name = categoryName {self.category.categoryName = name}
             self.task.category = category
         }
         setNotification(task: task)

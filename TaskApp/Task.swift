@@ -27,7 +27,7 @@ class Task: Object {
 
 class Category: Object {
     // ID
-    @Persisted var id = ""
+    @Persisted(primaryKey: true) var id: ObjectId
     //カテゴリ名
     @Persisted var categoryName = ""
 }
