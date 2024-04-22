@@ -14,8 +14,6 @@ class ViewController: UIViewController, UITableViewDelegate,UITableViewDataSourc
     @IBOutlet weak var categorySearch: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
-    
-    
     // Realmインスタンスを取得する
     let realm = try! Realm()
     // DB内のタスクが格納されるリスト。

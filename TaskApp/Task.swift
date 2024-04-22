@@ -30,4 +30,8 @@ class Category: Object {
     @Persisted(primaryKey: true) var id: ObjectId
     //カテゴリ名
     @Persisted var categoryName = ""
+    
+    override static func primaryKey() -> String? {
+        return "id"
+    }
 }

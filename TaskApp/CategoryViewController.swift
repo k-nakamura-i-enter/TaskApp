@@ -18,22 +18,39 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet weak var categoryTableView: UITableView!
     
     let realm = try! Realm()
-    var category: Category!
-    var categoryArray = try! Realm().objects(Category.self).sorted(byKeyPath: "id", ascending: true)
+    var category: Category! = Category()
     
+    var categoryArray = try! Realm().objects(Category.self)
+        
     weak var delegate: CategoryViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        categoryTableView.fillerRowHeight = UITableView.automaticDimension
         categoryTableView.delegate = self
         categoryTableView.dataSource = self
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+//        if let result = categoryArray.first{
+//            print(result)
+//        }
+        categoryTableView.reloadData()
+    }
+    
     @IBAction func saveButton(_ sender: Any) {
-        try! realm.write {
-            if let catName = categoryName.text{
-                self.category.categoryName = catName
+        if let catName = self.categoryName.text{
+            let catIdArray = try! Realm().objects(Category.self).where({$0.categoryName == catName}).map{$0.id}
+            if catIdArray.count < 1 {
+                try! realm.write {
+                    print(catName)
+                    let catNames = Category()
+                    catNames.categoryName = catName
+                    self.realm.add(catNames)
+                    print(self.category.categoryName)
+                }
             }
         }
 
@@ -46,14 +63,14 @@ class CategoryViewController: UIViewController, UITableViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // 再利用可能な cell を得る
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell_cat", for: indexPath)
+        let cell_cat = tableView.dequeueReusableCell(withIdentifier: "Cell_cat", for: indexPath)
         // Cellに値を設定する
         let category = categoryArray[indexPath.row]
-        var content = cell.defaultContentConfiguration()
+        var content = cell_cat.defaultContentConfiguration()
         content.text = category.categoryName
-        cell.contentConfiguration = content
+        cell_cat.contentConfiguration = content
         
-        return cell
+        return cell_cat
     }
     // 各セルを選択した時に実行されるメソッド
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

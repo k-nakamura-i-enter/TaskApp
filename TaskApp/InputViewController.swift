@@ -9,19 +9,18 @@ import UIKit
 import RealmSwift
 import UserNotifications
 
-class InputViewController: UIViewController {
+class InputViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate  {
+    
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var contentsTextView: UITextView!
     @IBOutlet weak var datePicker: UIDatePicker!
+    @IBOutlet weak var categoryPicker: UIPickerView!
     
     
     let realm = try! Realm()
-    var categoryArray = try! Realm().objects(Category.self)
-    var uniqueCategoryArray: Set<String> = []
+    var categoryArray = try! Realm().objects(Category.self).sorted(byKeyPath: "id")
     var task: Task!
-    let category = Category()
-    var categoryId: String?
-    var categoryName: String?
+    var selectCategory = Category()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,10 +33,13 @@ class InputViewController: UIViewController {
         titleTextField.text = task.title
         contentsTextView.text = task.contents
         datePicker.date = task.date
-//        if let category = task.category {
-//            categoryTextField.text = category.categoryName
-//        }
-
+        categoryPicker.dataSource = self
+        categoryPicker.delegate = self
+        if let category = task.category{
+            if let index = categoryArray.firstIndex(of: category){
+                self.categoryPicker.selectRow(index, inComponent: 0, animated: true)
+            }
+        }
         self.navigationItem.backButtonTitle = "キャンセル"
     }
     
@@ -51,13 +53,12 @@ class InputViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?){
-        
+        categoryPicker.reloadAllComponents()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-//        if let category = self.categoryName {
-//            categoryTextField.text = category
-//        }
+        categoryArray = try! Realm().objects(Category.self).sorted(byKeyPath: "id")
+        categoryPicker.reloadAllComponents()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -110,11 +111,28 @@ class InputViewController: UIViewController {
             self.task.contents = self.contentsTextView.text
             self.task.date = self.datePicker.date
             self.realm.add(self.task, update: .modified)
-            self.task.category = category
+            self.task.category = selectCategory
         }
         setNotification(task: task)
         navigationController?.popViewController(animated: true)
     }
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return categoryArray.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return categoryArray[row].categoryName
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        selectCategory = categoryArray[row]
+    }
+    
     /*
     // MARK: - Navigation
 
